@@ -32,7 +32,7 @@ def generate_rows(quantity: int) -> list[dict]:
 
 
 def main() -> None:
-    rows = generate_rows(3000)
+    rows = generate_rows(120)
     
     with open(FILE_NAME, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELD_NAMES)
