@@ -1,11 +1,15 @@
 import random
 from datetime import date, timedelta
+import csv
+
+
 
 start_date = date(2023,2,3)
 end_date = date(2026,11,24)
 days_range = (end_date - start_date).days
 
 categories = ["Limpieza","Bebidas", "Alimentos", "Perfumería"]
+FILE_NAME="inventario.csv"
 FIELDS = {
     "id_producto": lambda n : n,
     "nombre": lambda n: f"Producto {n}",
@@ -16,13 +20,26 @@ FIELDS = {
         start_date + timedelta(days=random.randint(0, days_range))
     ).strftime("%Y-%m-%d"),
 }
+FIELD_NAMES = [fname for fname in FIELDS]
 
 
 def generar_producto(n: int) -> dict:
     return {campo: fn(n) for campo, fn in FIELDS.items()}
 
-for i in range(1,101):
-    producto = generar_producto(i)
-    for k,v in producto.items():
-        print(f"{k}: {v}")
-    print("-" * 25)
+def generate_rows(quantity: int) -> list[dict]:
+    return [generar_producto(i) for i in range(1, quantity+1)]
+
+
+
+def main() -> None:
+    rows = generate_rows(3000)
+    
+    with open(FILE_NAME, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=FIELD_NAMES)
+        writer.writeheader()
+        writer.writerows(rows)
+    
+    print(f"Archivo '{FILE_NAME}' generado con éxito.")
+    
+if __name__ == "__main__":
+    main()
