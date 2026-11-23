@@ -2,13 +2,11 @@ import random
 from datetime import date, timedelta
 import csv
 
-
-
 start_date = date(2023,2,3)
 end_date = date(2026,11,24)
-days_range = (end_date - start_date).days
+days_range = (end_date - start_date).days 
 
-categories = ["Limpieza","Bebidas", "Alimentos", "Perfumería"]
+categories = ["Limpieza", "Bebidas", "Alimentos", "Perfumería"]
 FILE_NAME="inventario.csv"
 FIELDS = {
     "id_producto": lambda n : n,
@@ -22,17 +20,29 @@ FIELDS = {
 }
 FIELD_NAMES = [fname for fname in FIELDS]
 
-
 def generar_producto(n: int) -> dict:
     return {campo: fn(n) for campo, fn in FIELDS.items()}
 
 def generate_rows(quantity: int) -> list[dict]:
     return [generar_producto(i) for i in range(1, quantity+1)]
 
+def force_errors(rows: list[dict]) -> None:
+    for r in rows[:3]:
+        r["stock"] = 0
+        
+    for r in rows[10:13]:
+        r["fecha_ingreso"] = start_date
+    
+    for r in rows[20:23]:
+        r["categoria"] = categories[0]
 
+    for r in rows[30:34]:
+        r["stock"] = "diez"
+        r["fecha_ingreso"] = end_date.strftime("%Y/%m/%d")
 
 def main() -> None:
     rows = generate_rows(120)
+    force_errors(rows)
     
     with open(FILE_NAME, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELD_NAMES)
