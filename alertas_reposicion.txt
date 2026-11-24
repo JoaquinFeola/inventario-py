@@ -1,0 +1,8 @@
+1 | Producto 1 | Stock actual: 0 | Categoria: Alimentos
+2 | Producto 2 | Stock actual: 0 | Categoria: Bebidas
+3 | Producto 3 | Stock actual: 0 | Categoria: Alimentos
+42 | Producto 42 | Stock actual: 0 | Categoria: Alimentos
+61 | Producto 61 | Stock actual: 0 | Categoria: Alimentos
+85 | Producto 85 | Stock actual: 0 | Categoria: Limpieza
+73 | Producto 73 | Stock actual: 1 | Categoria: Bebidas
+92 | Producto 92 | Stock actual: 1 | Categoria: Perfumería
