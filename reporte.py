@@ -1,61 +1,78 @@
 import csv
+from common import load_inventory, aggregate_by_category, get_critical_products
 
-RESUMEN_FILE = "resumen_categorias.csv"
-RESUMEN_FILE = "alertas_reposicion.txt"
+CRITICAL_STOCK = 5
+RESUMEN_FILE_PATH = "resumen_categorias.csv"
+ALERT_FILE_PATH = "alertas_reposicion.txt"
+INVENTORY_FILE_PATH = "inventario.csv"
 
-def exportar_categoria_csv(resumen_categorias, archivo_salida=RESUMEN_FILE):
+
+def exportar_categoria_csv(categories_products, archivo_salida=RESUMEN_FILE_PATH):
     with open(archivo_salida, "w", newline="", encoding="utf-8") as file:
         data = csv.writer(file)
         data.writerow(["categoria", "total_productos", "total_stock", "valor_total"])
 
-        for categoria, datos in resumen_categorias.items():
+        for categoria, datos in categories_products.items():
             data.writerow([
                 categoria,
                 datos["total_productos"],
                 datos["total_stock"],
                 f"{datos['valor_total']:.2f}",
             ])
-            
-def exportar_alertas_txt(productos_criticos, archivos_salida=RESUMEN_FILE):
-    with open(archivos_salida, "w", newline="", encoding="uft-8") as f:
-        for productos in productos_criticos:
-            f.write(
-                f"{productos['id_productos']}  |  {productos['nombre']} | "
-                f"Stock actual: {productos['stock']} | Categoria: {productos['categoria']}\n"
-            )
-            
-def mostrar_productos(productos, resumen_categorias, productos_criticos):
-    total_productos = len(productos)
 
-    if resumen_categorias:
-        cat_mayor = max(
-            resumen_categorias.items(),
+def exportar_alertas_txt(critical_products, archivos_salida=ALERT_FILE_PATH):
+    with open(archivos_salida, "w", newline="", encoding="utf-8") as f:
+        for producto in critical_products:
+            f.write(
+                f"{producto['id_producto']}  |  {producto['nombre']} | "
+                f"Stock actual: {producto['stock']} | Categoria: {producto['categoria']}\n"
+            )
+
+
+def print_best_category_total_value(categories_products):
+    if len(categories_products) > 0:
+        best_category = max(
+            categories_products.items(),
             key=lambda item: item[1]["valor_total"],
         )
         print(
-            f"Categoría con mayor valor total: {cat_mayor[0]} "
-            f"(${cat_mayor[1]['valor_total']:.2f})"
+            f"Categoría con mayor valor total: {best_category[0]} "
+            f"(${best_category[1]['valor_total']:,.2f})"
         )
-        
-def mostrar_productos(productos, resumen_categorias, productos_criticos=None):
-    total_productos = len(productos)
 
-    if productos_criticos is not None:
-        porcentaje = (
-            (len(productos_criticos) / total_productos * 100)
-            if total_productos > 0
+
+def print_products_percentage(products, categories_products, critical_products=None):
+    total_products = len(products)
+
+    if critical_products is not None:
+        percentage = (
+            (len(critical_products) / total_products * 100)
+            if total_products > 0
             else 0.0
         )
         print(
-            f"Productos críticos: {len(productos_criticos)} de {total_productos} "
-            f"({porcentaje:.2f}%)"
+            f"Productos críticos: {len(critical_products)} de {total_products} "
+            f"({percentage:,.2f}%)"
         )
         
         print("Precio promedio por categoría:")
-    for categoria, datos in resumen_categorias.items():
-        promedio = (
-            datos["suma_precios"] / datos["total_productos"]
+    for categoria, datos in categories_products.items():
+        average = (
+            datos["valor_total"] / datos["total_productos"]
             if datos["total_productos"] > 0
             else 0.0
         )
-        print(f"  - {categoria}: ${promedio:.2f}")
+        print(f"  - {categoria}: ${average:,.2f}")
+
+def main():
+    products, ids_errors, dismissed_count = load_inventory(INVENTORY_FILE_PATH)
+    categories_products = aggregate_by_category(products)
+    critical_products = get_critical_products(products, CRITICAL_STOCK)
+    
+    exportar_categoria_csv(categories_products)
+    exportar_alertas_txt(critical_products)
+    print_best_category_total_value(categories_products)
+    print_products_percentage(products, categories_products, critical_products)
+
+if __name__ == "__main__":
+    main()
