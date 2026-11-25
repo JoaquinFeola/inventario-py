@@ -6,7 +6,7 @@ start_date = date(2023,2,3)
 end_date = date(2026,11,24)
 days_range = (end_date - start_date).days 
 
-categories = ["Limpieza", "Bebidas", "Alimentos", "Perfumería", "Mascotas"]
+categories = ["Limpieza", "Bebidas", "Alimentos", "Perfumería", ]
 FILE_NAME="inventario.csv"
 FIELDS = {
     "id_producto": lambda n : n,
@@ -31,7 +31,7 @@ def force_errors(rows: list[dict]) -> None:
         r["stock"] = 0
         
     for r in rows[4:6]:
-        r["categoria"] = categories[-1]    
+        r["categoria"] = "Mascotas"
     
     for r in rows[10:13]:
         r["fecha_ingreso"] = start_date

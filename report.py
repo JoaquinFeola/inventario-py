@@ -45,20 +45,15 @@ def print_products_percentage(products, categories_products, critical_products=N
     total_products = len(products)
 
     if critical_products is not None:
-        percentage = (
-            (len(critical_products) / total_products) * 100
-            if total_products > 0
-            else 0.0
-        )
         percentage = (len(critical_products) / total_products ) * 100 if total_products > 0 else 0.0
         print(
             f"Productos críticos: {len(critical_products)} de {total_products} "
             f"({percentage:,.2f}%)"
         )
         
-        print("Precio promedio por categoría:")
+    print("Precio promedio por categoría:")
     for categoria, item in categories_products.items():
-        print(f"  - {categoria}: ${item['valor_promedio_producto']:,.2f}")
+        print(f"  - {categoria}: ${item['precio_promedio']:,.2f}")
 
 def main():
     products, ids_errors, dismissed_count = load_inventory(INVENTORY_FILE_PATH)
