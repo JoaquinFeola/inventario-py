@@ -24,7 +24,7 @@ def exportar_alertas_txt(critical_products, archivos_salida=ALERT_FILE_PATH):
     with open(archivos_salida, "w", newline="", encoding="utf-8") as f:
         for producto in critical_products:
             f.write(
-                f"{producto['id_producto']}  |  {producto['nombre']} | "
+                f"{producto['id_producto']} | {producto['nombre']} | "
                 f"Stock actual: {producto['stock']} | Categoria: {producto['categoria']}\n"
             )
 
@@ -46,23 +46,19 @@ def print_products_percentage(products, categories_products, critical_products=N
 
     if critical_products is not None:
         percentage = (
-            (len(critical_products) / total_products * 100)
+            (len(critical_products) / total_products) * 100
             if total_products > 0
             else 0.0
         )
+        percentage = (len(critical_products) / total_products ) * 100 if total_products > 0 else 0.0
         print(
             f"Productos críticos: {len(critical_products)} de {total_products} "
             f"({percentage:,.2f}%)"
         )
         
         print("Precio promedio por categoría:")
-    for categoria, datos in categories_products.items():
-        average = (
-            datos["valor_total"] / datos["total_productos"]
-            if datos["total_productos"] > 0
-            else 0.0
-        )
-        print(f"  - {categoria}: ${average:,.2f}")
+    for categoria, item in categories_products.items():
+        print(f"  - {categoria}: ${item['valor_promedio_producto']:,.2f}")
 
 def main():
     products, ids_errors, dismissed_count = load_inventory(INVENTORY_FILE_PATH)

@@ -63,15 +63,18 @@ def aggregate_by_category(products: list[dict]) -> dict:
         category: str = product["categoria"].strip().title()
         
         if category not in categories_products:
-            categories_products[category] = { "total_productos": 0, "total_stock": 0, "valor_total": 0.0 }
+            categories_products[category] = { "total_productos": 0, "total_stock": 0, "valor_total": 0.0, "valor_promedio_producto": 0.0 }
             
         categories_products[category]["total_stock"] += product["stock"]
         categories_products[category]["valor_total"] += product["precio_unitario"] * product["stock"]
+        categories_products[category]["valor_promedio_producto"] += product["precio_unitario"]
         categories_products[category]["total_productos"] += 1
     
     for cp in categories_products.values():
         cp["valor_total"] = round(cp["valor_total"],2)
-        
+        cp["valor_promedio_producto"] = cp["valor_promedio_producto"] / cp["total_productos"] if cp["total_productos"] > 0 else 0.0
+    
+    
     return categories_products
 
 
